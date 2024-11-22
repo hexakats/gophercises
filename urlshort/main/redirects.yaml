@@ -1,0 +1,8 @@
+- path: /urlshort
+  url: https://github.com/gophercises/urlshort
+- path: /urlshort-solution
+  url: https://github.com/gophercises/urlshort/tree/solution
+- path: /youtube
+  url: https://youtube.com/watch?v=BsIa_LKojJI # Couldn't have understood the net/http package without this tutorial
+- path: /github
+  url: https://github.com/mossb0x/gophercises

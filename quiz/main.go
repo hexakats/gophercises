@@ -64,7 +64,11 @@ func gameTimer(duration int) {
 }
 
 func main() {
-	filePath := flag.String("csv", "problems.csv", "Reads a CSV file with questions in the first column and answers in the second column.")
+	filePath := flag.String(
+		"csv",
+		"problems.csv",
+		"Reads a CSV file with questions in the first column and answers in the second column.",
+	)
 	limit := flag.Int("limit", 30, "Sets a timer of n seconds. default is -limit=30")
 	shuffle := flag.Bool("shuffle", false, "Shuffles the question order when used.")
 

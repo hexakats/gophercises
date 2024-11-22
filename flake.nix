@@ -1,4 +1,4 @@
-{
+{# I'm no longer using Nix or NixOS
   description = "A Nix-flake-based Go development environment";
 
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
