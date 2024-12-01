@@ -6,14 +6,14 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"urlshort"
+	"urlshort/handler"
 )
 
 func main() {
 	yamlFlag := flag.String(
 		"yaml",
 		"",
-		`Path to a yaml file (root is the package's directory) with the format:
+		`Path to a yaml file with the format:
 		- path: /some-path
 		  url: https://www.some-url.com/demo
 		- path: /some-other-path
@@ -25,7 +25,7 @@ func main() {
 	jsonFlag := flag.String(
 		"json",
 		"",
-		`Path to a json file (root is the package's directory) with the format:
+		`Path to a json file with the format:
 
 		{
 		  "path": "url",
@@ -35,23 +35,14 @@ func main() {
 		default: ""`,
 	)
 
-	boltDbFlag := flag.Bool(
-		"bolt-db",
-		false,
-		`Set this flag to use a boltDB database instead of yaml/json file containing the directs`,
-	)
-
 	flag.Parse()
 
-	if (*yamlFlag != "" && *jsonFlag != "" && *boltDbFlag) ||
-		(*yamlFlag != "" && *jsonFlag != "") ||
-		(*yamlFlag != "" && *boltDbFlag) ||
-		(*jsonFlag != "" && *boltDbFlag) {
+	if (*yamlFlag != "" && *jsonFlag != "") || (*yamlFlag != "" && *jsonFlag != "") {
 		fmt.Println("Error: Only one of --yaml, --json, or --bolt-db can be specified.")
 		os.Exit(0)
 	}
 
-	if *yamlFlag == "" && *jsonFlag == "" && !*boltDbFlag {
+	if *yamlFlag == "" && *jsonFlag == "" {
 		fmt.Println("Error: A flag must be specified.")
 		os.Exit(0)
 	}
@@ -61,8 +52,8 @@ func main() {
 
 	// Build the MapHandler using the mux as the fallback
 	pathsToUrls := map[string]string{}
-	mapHandler := urlshort.MapHandler(pathsToUrls, mux)
-	var handler http.HandlerFunc
+	mapHandler := handler.MapHandler(pathsToUrls, mux)
+	var httpHandler http.HandlerFunc
 
 	switch {
 	case *yamlFlag != "":
@@ -71,7 +62,7 @@ func main() {
 			log.Println(err)
 		}
 
-		handler, err = urlshort.YAMLHandler([]byte(yaml), mapHandler)
+		httpHandler, err = handler.YAMLHandler([]byte(yaml), mapHandler)
 		if err != nil {
 			log.Println(err)
 		}
@@ -82,23 +73,17 @@ func main() {
 			log.Println(err)
 		}
 
-		handler, err = urlshort.JSONHandler([]byte(json), mapHandler)
+		httpHandler, err = handler.JSONHandler([]byte(json), mapHandler)
 		if err != nil {
 			log.Println(err)
 		}
-
-	case *boltDbFlag:
-		// TODO: Implement
-		log.Fatalln("To be implemented.")
-	default:
-		break
 	}
 
 	// Build the YAMLHandler using the mapHandler as the
 	// fallback
 	fmt.Println("Starting the server on :8080")
 
-	err := http.ListenAndServe(":8080", handler)
+	err := http.ListenAndServe(":8080", httpHandler)
 	if err != nil {
 		log.Fatal(err)
 	}

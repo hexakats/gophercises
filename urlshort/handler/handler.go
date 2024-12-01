@@ -1,12 +1,29 @@
-package urlshort
+package handler
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
+	"strings"
 
 	yaml "gopkg.in/yaml.v3"
 )
+
+func (p *Redirect) String() string {
+	return fmt.Sprintf("%s,%s", p.Path, p.Url)
+}
+
+func (p *Redirect) Set(value string) error {
+	// Split the input by a delimiter (e.g., comma)
+	parts := strings.Split(value, " ")
+	if len(parts) != 2 {
+		return fmt.Errorf("expecting two values separated by a space")
+	}
+	p.Path = parts[0]
+	p.Url = parts[1]
+	return nil
+}
 
 // MapHandler will return an http.HandlerFunc (which also
 // implements http.Handler) that will attempt to map any
@@ -101,12 +118,10 @@ func JSONHandler(jsonFile []byte, fallback http.Handler) (http.HandlerFunc, erro
 	return MapHandler(redirectMap, fallback), nil
 }
 
-// TODO: Document
-func BoltDbHandler() {
-	// TODO: Implement
-}
-
 type Redirect struct {
 	Path string `yaml:"path" json:"path"`
 	Url  string `yaml:"url"  json:"url"`
 }
+
+// Struct name should be in lower case because its not being exported,
+// This file only exports handler functions.
