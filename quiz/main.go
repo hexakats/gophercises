@@ -36,7 +36,7 @@ func askQuestion(questions [][]string) {
 	points := 0
 	question_number := 0
 
-	for true {
+	for {
 		fmt.Println("What's " + questions[question_number][0] + "?")
 		var response string
 		fmt.Scanln(&response)
@@ -53,7 +53,6 @@ func askQuestion(questions [][]string) {
 		}
 	}
 	fmt.Printf("You scored %1d out of %2d in the quiz.\n", points, len(questions))
-	return
 }
 
 func gameTimer(duration int) {
