@@ -10,10 +10,6 @@ import (
 	yaml "gopkg.in/yaml.v3"
 )
 
-func (p *Redirect) String() string {
-	return fmt.Sprintf("%s,%s", p.Path, p.Url)
-}
-
 func (p *Redirect) Set(value string) error {
 	// Split the input by a delimiter (e.g., comma)
 	parts := strings.Split(value, " ")
