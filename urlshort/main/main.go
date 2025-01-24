@@ -37,7 +37,7 @@ func main() {
 
 	flag.Parse()
 
-	if (*yamlFlag != "" && *jsonFlag != "") || (*yamlFlag != "" && *jsonFlag != "") {
+	if *yamlFlag != "" && *jsonFlag != "" {
 		fmt.Println("Error: Only one of --yaml, --json, or --bolt-db can be specified.")
 		os.Exit(0)
 	}
