@@ -4,6 +4,7 @@ import (
 	"cyoa/parse"
 	"cyoa/story"
 	"flag"
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -18,21 +19,21 @@ func main() {
 		log.Fatalln(err.Error())
 	}
 
-	chapter := "intro"
-
 	tmpl := template.Must(template.ParseFiles("./template/story.html"))
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		data := StoryPage{
-			Title:   story[chapter].Title,
-			Story:   story[chapter].Story,
-			Options: story[chapter].Options,
-		}
+	for arc, chapter := range story {
+		http.HandleFunc(fmt.Sprintf("/%s", arc), func(w http.ResponseWriter, r *http.Request) {
+			data := StoryPage{
+				Title:   chapter.Title,
+				Story:   chapter.Story,
+				Options: chapter.Options,
+			}
 
-		err := tmpl.Execute(w, data)
-		if err != nil {
-			log.Fatalln(err)
-		}
-	})
+			err := tmpl.Execute(w, data)
+			if err != nil {
+				log.Fatalln(err)
+			}
+		})
+	}
 
 	err = http.ListenAndServe(":8080", nil)
 	if err != nil {
