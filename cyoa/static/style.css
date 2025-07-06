@@ -1,0 +1,28 @@
+* {
+    font-family: 'Times New Roman', Times, serif;
+}
+
+a,
+a:visited,
+a:hover,
+a:active {
+    color: inherit;
+}
+
+h1 {
+    text-align: center;
+}
+
+p {
+    font-size: 20px;
+}
+
+.arc {
+    font-size: 24px;
+    font-weight: 700;
+}
+
+
+.container {
+    padding: 1em;
+}

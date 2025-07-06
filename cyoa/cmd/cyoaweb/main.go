@@ -1,14 +1,15 @@
 package main
 
 import (
+	"cyoa/handler"
 	"cyoa/parse"
-	"cyoa/story"
 	"flag"
 	"fmt"
-	"html/template"
 	"log"
 	"net/http"
 )
+
+const PORT = ":8080"
 
 func main() {
 	filename := flag.String("file", "gopher.json", "The JSON file containing the CYOA story")
@@ -19,30 +20,25 @@ func main() {
 		log.Fatalln(err.Error())
 	}
 
-	tmpl := template.Must(template.ParseFiles("./template/story.html"))
-	for arc, chapter := range story {
-		http.HandleFunc(fmt.Sprintf("/%s", arc), func(w http.ResponseWriter, r *http.Request) {
-			data := StoryPage{
-				Title:   chapter.Title,
-				Story:   chapter.Story,
-				Options: chapter.Options,
-			}
+	fs := http.FileServer(http.Dir("static"))
+	http.Handle("/static/", http.StripPrefix("/static/", fs))
 
-			err := tmpl.Execute(w, data)
-			if err != nil {
-				log.Fatalln(err)
-			}
-		})
+	for arc, chapter := range story {
+		err = handler.Handler(chapter, arc, "./templates/index.html")
+		if err != nil {
+			log.Fatalln(err)
+		}
+
 	}
 
-	err = http.ListenAndServe(":8080", nil)
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, "/intro", http.StatusFound)
+	})
+
+	err = http.ListenAndServe(PORT, nil)
 	if err != nil {
 		log.Fatalln(err)
 	}
-}
 
-type StoryPage struct {
-	Title   string
-	Story   []string
-	Options []story.Option
+	fmt.Printf("Listening on %s", PORT)
 }

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title></title>
+    <link href="/static/style.css" rel="stylesheet">
+</head>
+
+</html>
+
+<body>
+    <h1 class="title">{{.Title}}</h1>
+    <div class="container">
+        {{range .Story}}
+        <p>
+            {{.}}
+        </p>
+        {{end}}
+        <ul>
+            {{range .Options}}
+            <li class="arc"><a href="{{.Arc}}">{{.Arc}}</a></li>
+            {{end}}
+        </ul>
+    </div>
+</body>
